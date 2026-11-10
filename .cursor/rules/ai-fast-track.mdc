@@ -1,0 +1,22 @@
+---
+description: Ngữ cảnh học AI Engineering Fast-Track. Đọc trước khi trả lời về chương trình, starter kit, lịch, model hoặc bài tập.
+alwaysApply: true
+---
+
+# AI Fast-Track — ngữ cảnh đang học
+
+Người dùng đang tự học chương trình AI Engineering Fast-Track v12 tại nhà và trên máy công ty. Trả lời bằng tiếng Việt. Nếu workspace có file `HUONG_DAN_AI_FAST_TRACK.md`, đọc file đó trước khi đề xuất bước tiếp theo. Nếu không có, dùng các mục "Đã chốt" và "Trạng thái" bên dưới. Slide PowerPoint vẫn là nguồn yêu cầu gốc.
+
+## Đã chốt
+
+- Kickoff 10/11/2026. Tuần 09–13/11 không tính bài. W1 bắt đầu 16/11/2026, Final Gate 08/01/2027.
+- Repo public tự tạo; lúc chấm gửi link cho mentor.
+- API key tự kiếm. Model chính: Groq `openai/gpt-oss-120b` (`OPENAI_BASE_URL=https://api.groq.com/openai/v1`). Dự phòng: Gemini `gemini-3.5-flash-lite`.
+- Staging trên AWS cá nhân.
+- Starter kit không có lời giải. Không sửa file gold trong `data/evaluation/`. Không commit `.env` hay API key.
+
+## Trạng thái
+
+Đang ở Ngày 0: chưa cài venv, chưa chạy `scripts/smoke_test.py`. Bước kế tiếp là cài Python 3.11+, chạy smoke test đến khi in `PASS`, rồi `pytest -q tests/test_mock_jira.py` phải là `3 passed`.
+
+Khi người dùng hỏi "làm tiếp đi", chỉ làm đúng bước chưa xong trong guide. Một thay đổi mỗi lần, giải thích cách kiểm tra, rồi dừng chờ xác nhận.
