@@ -13,6 +13,9 @@ This kit provides **real synthetic fixtures and reusable local tools**; it inten
 7. Example read-only call: `curl -H 'X-Allowed-Project: ALPHA' http://127.0.0.1:8001/projects/ALPHA/sprints/12/issues`.
 8. For W3, run `docker compose up -d db` and use pgvector. Your implementation should add the ingestion pipeline.
 
+### W0 kickoff
+Commands and results: [evidence/w0_kickoff.md](evidence/w0_kickoff.md).
+
 ### Resource map
 - `data/documents/`: 15 synthetic documents plus manifest (5 requirements, 5 technical, 5 PM)
 - `data/jira/issues.json`: 30 sample issue records for Projects ALPHA/BETA/GAMMA
