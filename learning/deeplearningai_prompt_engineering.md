@@ -46,7 +46,7 @@ Hai nguyên tắc.
 
 **Bảo model kiểm tra điều kiện trước khi trả lời.** Ví dụ trong khóa: nếu đoạn văn có các bước hướng dẫn thì viết lại thành Step 1, Step 2; nếu không có thì viết đúng một câu `No steps provided.` W1 dùng cùng ý này: chỉ chọn một trong bốn category và một trong ba priority đã liệt kê.
 
-**Few-shot.** Đưa một vài cặp input và output mẫu để model bắt chước dạng trả lời. V1 của tuần này chưa dùng ví dụ. V2 và V3 mới thêm.
+**Few-shot.** Đưa một vài cặp input và output mẫu để model bắt chước dạng trả lời.
 
 ### Nguyên tắc 2: cho model thời gian suy nghĩ
 
