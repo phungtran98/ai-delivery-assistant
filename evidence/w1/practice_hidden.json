@@ -1,0 +1,14 @@
+[
+  {
+    "issue_id": "HIDDEN-01",
+    "text": "No fallback if the sprint chart export is down. Only the PM dashboard uses it.",
+    "category": "Bug",
+    "priority": "P3"
+  },
+  {
+    "issue_id": "HIDDEN-02",
+    "text": "Vendor API missed the cutover this morning. Checkout is down for all customers.",
+    "category": "Bug",
+    "priority": "P1"
+  }
+]
