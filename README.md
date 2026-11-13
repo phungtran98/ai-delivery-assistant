@@ -13,6 +13,16 @@ This kit provides **real synthetic fixtures and reusable local tools**; it inten
 7. Example read-only call: `curl -H 'X-Allowed-Project: ALPHA' http://127.0.0.1:8001/projects/ALPHA/sprints/12/issues`.
 8. For W3, run `docker compose up -d db` and use pgvector. Your implementation should add the ingestion pipeline.
 
+### W0 kickoff
+Commands and results: [evidence/w0/w0_kickoff.md](evidence/w0/w0_kickoff.md).
+
+### W1 prompt engineering
+- Prompts: [prompts/w1/v1.md](prompts/w1/v1.md), [v2](prompts/w1/v2.md), [v3](prompts/w1/v3.md)
+- Predictions: [w1_predictions.csv](evidence/w1/w1_predictions.csv), [v2](evidence/w1/w1_predictions_v2.csv), [v3](evidence/w1/w1_predictions_v3.csv)
+- Comparison: [evidence/w1/w1_v1_v2_v3_compare.md](evidence/w1/w1_v1_v2_v3_compare.md)
+- Error reasons: [evidence/w1/w1_error_reasons.md](evidence/w1/w1_error_reasons.md)
+- Score: `python scripts/evaluate_issue_classifier.py evidence/w1/w1_predictions_v3.csv`
+
 ### Resource map
 - `data/documents/`: 15 synthetic documents plus manifest (5 requirements, 5 technical, 5 PM)
 - `data/jira/issues.json`: 30 sample issue records for Projects ALPHA/BETA/GAMMA
