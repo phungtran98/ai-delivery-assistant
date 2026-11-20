@@ -101,10 +101,10 @@ def main():
             print(f"attempt {attempt} schema fail: {err}")
 
     print("issue_id:", case["issue_id"])
-    print("text:", case["text"])
-    print("raw:", raw)
-    print("parsed:", label)
-    print("gold:", case["category"], case["priority"])
+    print("\ntext:", case["text"])
+    print("\nraw:", raw)
+    print("\nparsed:", label)
+    print("\ngold:", case["category"], case["priority"])
 
 
 if __name__ == "__main__":
