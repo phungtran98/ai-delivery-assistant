@@ -5,8 +5,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from app.schemas import MeetingRequest, Summary
-from app.scoring import check, compare_details
-from app.services.llm import analyze, LLMError
+from app.scoring import check
+from app.services.llm import analyze, judge_summary, LLMError
 
 app = FastAPI(title="Delivery Assistant W2")
 
@@ -21,6 +21,11 @@ STATUS = {"timeout": 504, "rate_limit": 429, "upstream": 502, "bad_output": 502}
 class CompareRequest(BaseModel):
     case_id: str
     predicted: Summary
+
+
+class JudgeSummaryRequest(BaseModel):
+    expected_summary: str
+    predicted_summary: str
 
 
 def load_cases():
@@ -42,17 +47,8 @@ def demo_page():
 
 @app.get("/demo-api/cases")
 def demo_cases():
-    # Danh sách case cho dropdown; expected lấy riêng theo id
     cases = load_cases()
     return [{"id": c["id"], "title": c["title"], "group": c["group"], "input": c["input"]} for c in cases]
-
-
-@app.get("/demo-api/cases/{case_id}/expected")
-def demo_case_expected(case_id: str):
-    case = next((c for c in load_cases() if c["id"] == case_id), None)
-    if case is None:
-        raise HTTPException(status_code=404, detail="case_not_found")
-    return case["expected"]
 
 
 @app.post("/demo-api/compare")
@@ -66,5 +62,18 @@ def demo_compare(req: CompareRequest):
         "pass": reason == "",
         "reason": reason,
         "expected": case["expected"],
-        "details": compare_details(case["expected"], got),
+    }
+
+
+@app.post("/demo-api/judge-summary")
+def demo_judge_summary(req: JudgeSummaryRequest):
+    # Chỉ so nghĩa summary; không đổi PASS/FAIL từ check()
+    try:
+        result = judge_summary(req.expected_summary, req.predicted_summary)
+    except LLMError as e:
+        raise HTTPException(status_code=STATUS[e.kind], detail=e.kind)
+    return {
+        "same_meaning": result["same_meaning"],
+        "expected_summary": req.expected_summary,
+        "predicted_summary": req.predicted_summary,
     }
