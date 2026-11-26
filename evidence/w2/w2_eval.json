@@ -1,7 +1,7 @@
 {
-  "passed": 19,
+  "passed": 18,
   "schema_ok": 20,
-  "summary_ok": 13,
+  "summary_ok": 9,
   "judge_errors": 0,
   "rows": [
     {
@@ -9,9 +9,9 @@
       "group": "Normal",
       "pass": true,
       "reason": "",
-      "summary_ok": true,
+      "summary_ok": false,
       "predicted": {
-        "summary": "The team reviewed the sprint backlog and agreed to prioritize the login bug. Phu will fix the login authentication issue, Hung will review the pull request, and Minh will prepare regression test cases.",
+        "summary": "The team reviewed the sprint backlog and agreed to prioritize the login bug.",
         "decisions": [
           "Prioritize the login bug."
         ],
@@ -39,11 +39,11 @@
       "group": "Normal",
       "pass": true,
       "reason": "",
-      "summary_ok": true,
+      "summary_ok": false,
       "predicted": {
-        "summary": "The team planned the production deployment of version 2.5 for November 27, 2026, with checklist preparation and post-deployment health verification assigned.",
+        "summary": "The team discussed deploying version 2.5 to production and assigned preparation, deployment, and post-deployment verification tasks.",
         "decisions": [
-          "Deploy version 2.5 to production on November 27, 2026."
+          "Deploy version 2.5 to production on 2026-11-27."
         ],
         "actions": [
           {
@@ -71,7 +71,7 @@
       "reason": "",
       "summary_ok": false,
       "predicted": {
-        "summary": "The team discussed improving query performance for the orders table by adding an index.",
+        "summary": "The team agreed to add an index to the orders table to improve query performance.",
         "decisions": [
           "Add an index to the orders table to improve query performance."
         ],
@@ -161,7 +161,7 @@
       "reason": "",
       "summary_ok": true,
       "predicted": {
-        "summary": "Hung will review the authentication pull request, and Phu will address any feedback from the review. No deadlines were agreed upon.",
+        "summary": "Hung will review the authentication pull request, and Phu will address any feedback from the review. No deadlines were agreed.",
         "decisions": [],
         "actions": [
           {
@@ -180,18 +180,16 @@
     {
       "id": "TC07",
       "group": "Missing information",
-      "pass": true,
-      "reason": "",
+      "pass": false,
+      "reason": "decisions: đáp án 1, model 0",
       "summary_ok": false,
       "predicted": {
-        "summary": "The team agreed that the API documentation needs improvement. The endpoint descriptions will be updated by November 30, 2026.",
-        "decisions": [
-          "The API documentation needs improvement."
-        ],
+        "summary": "The team discussed improving the API documentation, specifically the endpoint descriptions.",
+        "decisions": [],
         "actions": [
           {
             "owner": null,
-            "action": "Update the endpoint descriptions.",
+            "action": "Update the endpoint descriptions in the API documentation.",
             "due_date": "2026-11-30"
           }
         ]
@@ -223,14 +221,12 @@
     {
       "id": "TC09",
       "group": "Missing information",
-      "pass": true,
-      "reason": "",
+      "pass": false,
+      "reason": "decisions: đáp án 1, model 0",
       "summary_ok": true,
       "predicted": {
         "summary": "The team discussed improving code quality and reducing technical debt. Everyone agreed that refactoring is necessary, but no tasks or implementation dates were established.",
-        "decisions": [
-          "The team agreed that refactoring is necessary."
-        ],
+        "decisions": [],
         "actions": []
       }
     },
@@ -241,7 +237,7 @@
       "reason": "",
       "summary_ok": true,
       "predicted": {
-        "summary": "Phu suggested upgrading the application to Rails 8.1. Hung raised concerns about backward compatibility, and Minh said the team might consider an upgrade next quarter.",
+        "summary": "Phu suggested upgrading the application to Rails 8.1. Hung raised backward-compatibility concerns, and Minh said the team might consider an upgrade next quarter. No final decision was made, and no implementation tasks were assigned.",
         "decisions": [],
         "actions": []
       }
@@ -253,7 +249,7 @@
       "reason": "",
       "summary_ok": true,
       "predicted": {
-        "summary": "The team discussed possibly migrating background jobs to AWS Lambda. Lan suggested AWS Step Functions for orchestration, and Hung said more research would be helpful. The team has not decided whether to proceed with the migration.",
+        "summary": "The team discussed possibly migrating background jobs to AWS Lambda. Lan suggested AWS Step Functions for orchestration, and Hung said more research would be helpful.",
         "decisions": [],
         "actions": []
       }
@@ -265,7 +261,7 @@
       "reason": "",
       "summary_ok": true,
       "predicted": {
-        "summary": "The team discussed adding dark mode to the application. Minh said it could improve user experience. Phu suggested including it in the next sprint, while Hung recommended waiting for customer feedback. The decision was postponed until the next planning meeting.",
+        "summary": "The team discussed adding dark mode to the application. Minh said it could improve user experience; Phu suggested adding it to the next sprint, while Hung recommended waiting for customer feedback. The decision was postponed until the next planning meeting.",
         "decisions": [],
         "actions": []
       }
@@ -277,7 +273,7 @@
       "reason": "",
       "summary_ok": true,
       "predicted": {
-        "summary": "The team discussed replacing some integration tests with unit tests to reduce execution time. Lan agreed to investigate feasibility. The overall testing strategy was not decided.",
+        "summary": "The team discussed replacing some integration tests with unit tests to reduce execution time. Lan agreed to investigate feasibility. The overall testing strategy remains undecided.",
         "decisions": [],
         "actions": [
           {
@@ -293,9 +289,9 @@
       "group": "Complex",
       "pass": true,
       "reason": "",
-      "summary_ok": true,
+      "summary_ok": false,
       "predicted": {
-        "summary": "The team reviewed the upcoming release and identified database migration failures and API compatibility issues as major risks. The release was postponed, and production deployment is contingent on all critical tests passing.",
+        "summary": "The team reviewed the upcoming release and identified database migration failures and API compatibility issues as major risks. The release was postponed, and the team set a requirement for production deployment.",
         "decisions": [
           "Postpone the release from December 3 to December 7, 2026.",
           "Do not proceed with production deployment until all critical tests pass."
@@ -329,9 +325,9 @@
       "group": "Complex",
       "pass": true,
       "reason": "",
-      "summary_ok": true,
+      "summary_ok": false,
       "predicted": {
-        "summary": "The team discussed improving the authentication module, implementing token refresh handling, adding automated tests, reviewing security risks, updating documentation, and requiring additional security validation before release.",
+        "summary": "The team agreed to improve the authentication module and discussed implementation, testing, security review, and documentation work.",
         "decisions": [
           "Improve the authentication module.",
           "Require additional security validation before releasing authentication changes."
@@ -339,12 +335,12 @@
         "actions": [
           {
             "owner": "Phu",
-            "action": "Work on implementing token refresh handling.",
+            "action": "Work with Hung to implement token refresh handling.",
             "due_date": "2026-12-04"
           },
           {
             "owner": "Hung",
-            "action": "Work on implementing token refresh handling.",
+            "action": "Work with Phu to implement token refresh handling.",
             "due_date": "2026-12-04"
           },
           {
@@ -372,7 +368,7 @@
       "reason": "",
       "summary_ok": false,
       "predicted": {
-        "summary": "The team discussed additional testing needed for the payment integration and revised the project deadline.",
+        "summary": "The team discussed additional testing needed for the payment integration and revised the project schedule.",
         "decisions": [
           "Move the payment integration deadline to December 9, 2026."
         ],
@@ -402,10 +398,10 @@
       "reason": "",
       "summary_ok": false,
       "predicted": {
-        "summary": "The team reviewed the December 2 production outage, which was caused by an exhausted database connection pool. They discussed increasing the pool limit, adding monitoring alerts, and moving the database to a larger server.",
+        "summary": "The team reviewed the December 2 production outage caused by an exhausted database connection pool. They discussed increasing the pool limit, adding monitoring alerts, and moving the database to a larger server.",
         "decisions": [
           "Increase the database connection pool limit.",
-          "Add monitoring alerts for the connection pool.",
+          "Add connection pool monitoring alerts.",
           "Do not move the database to a larger server for now."
         ],
         "actions": [
@@ -459,19 +455,13 @@
     {
       "id": "TC20",
       "group": "Edge cases",
-      "pass": false,
-      "reason": "actions: đáp án 0, model 1",
+      "pass": true,
+      "reason": "",
       "summary_ok": false,
       "predicted": {
-        "summary": "The API seemed slower than usual. The database was suggested as a possible cause, and checking the logs was suggested. The team proposed discussing the issue again at the next meeting.",
+        "summary": "The API seemed slower than usual. The database was mentioned as a possible cause, and checking the logs was suggested. The team planned to discuss the issue again at the next meeting.",
         "decisions": [],
-        "actions": [
-          {
-            "owner": null,
-            "action": "Discuss the issue again at the next meeting.",
-            "due_date": null
-          }
-        ]
+        "actions": []
       }
     }
   ]

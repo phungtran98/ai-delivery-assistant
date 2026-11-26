@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W2 Demo – Biên bản họp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e1419;
+      --panel: #161e26;
+      --panel-2: #1c2630;
+      --line: #2a3744;
+      --text: #e7eef5;
+      --muted: #8fa0b0;
+      --accent: #3dd6c6;
+      --accent-dim: #1f6f68;
+      --warn: #f0b429;
+      --err: #ef6b6b;
+      --ok: #5bd67a;
+      --radius: 12px;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(61, 214, 198, 0.12), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(240, 180, 41, 0.08), transparent 50%),
+        var(--bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(231, 238, 245, 0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.7), transparent 85%);
+    }
+
+    .wrap {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+      animation: rise 0.55s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .brand { display: grid; gap: 4px; }
+
+    .brand .tag {
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .controls .field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    select, button, textarea, pre { font: inherit; }
+
+    select {
+      min-width: min(380px, 70vw);
+      height: 44px;
+      padding: 0 14px;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3px rgba(61, 214, 198, 0.15);
+    }
+
+    button {
+      height: 44px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #4ae0cf, #2bb8a9);
+      color: #06211f;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    button:hover:not(:disabled) { filter: brightness(1.05); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { opacity: 0.55; cursor: wait; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: rise 0.65s ease both;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    #status, #compare {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      color: var(--warn);
+    }
+
+    #status.ok, #compare.ok { color: var(--ok); }
+    #status.err, #compare.err { color: var(--err); }
+    #status.busy, #compare.busy { color: var(--accent); }
+
+    textarea, pre {
+      width: 100%;
+      margin: 0;
+      padding: 18px;
+      min-height: 280px;
+      border: 0;
+      resize: vertical;
+      background: transparent;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c9d7e4;
+    }
+
+    #after {
+      display: grid;
+      margin-top: 16px;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    #diffBody td.pass { color: var(--ok); }
+    #diffBody td.fail { color: var(--err); }
+
+    #board {
+      display: none;
+      margin-top: 16px;
+    }
+
+    #board.visible { display: block; }
+
+    #boardSummary {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 13px;
+      border-top: 0;
+    }
+
+    td.pass { color: var(--ok); }
+    td.fail { color: var(--err); }
+
+    .json-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .json-grid { grid-template-columns: 1fr; }
+    }
+
+    .hint {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hint a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="tag">W2 · Analyze Meeting</div>
+        <h1>Demo biên bản họp</h1>
+      </div>
+      <div class="controls">
+        <div class="field">
+          <span>Chọn case</span>
+          <select id="case"></select>
+        </div>
+        <button id="run" type="button">Run</button>
+        <button id="runAll" class="secondary" type="button">Run all</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Input</h2></div>
+        <textarea id="input" spellcheck="false"></textarea>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Kết quả AI</h2>
+          <p id="status"></p>
+        </div>
+        <pre id="result">Chọn case rồi bấm Run.</pre>
+      </section>
+    </div>
+
+    <div id="after">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>So sánh với gold</h2>
+          <p id="compare">Bấm Run để chấm</p>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Hạng mục</th>
+              <th>Gold</th>
+              <th>AI</th>
+              <th>Kết quả</th>
+            </tr>
+          </thead>
+          <tbody id="diffBody"></tbody>
+        </table>
+      </section>
+
+      <div class="json-grid">
+        <section class="panel">
+          <div class="panel-head"><h2>JSON gold</h2></div>
+          <pre id="expected">Đang tải gold...</pre>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>JSON AI</h2></div>
+          <pre id="predictedCopy">Chưa chạy. Bấm Run.</pre>
+        </section>
+      </div>
+    </div>
+
+    <section id="board" class="panel">
+      <div class="panel-head">
+        <h2>Bảng Run all</h2>
+        <p id="boardSummary"></p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Case</th>
+            <th>Group</th>
+            <th>Kết quả</th>
+            <th>Lý do</th>
+          </tr>
+        </thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+    </section>
+
+    <p class="hint">API docs: <a href="/docs" target="_blank" rel="noreferrer">/docs</a>. Run all gọi API 20 lần, mất khoảng 1–2 phút.</p>
+  </div>
+
+  <script>
+    const select = document.getElementById("case");
+    const input = document.getElementById("input");
+    const run = document.getElementById("run");
+    const runAll = document.getElementById("runAll");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const after = document.getElementById("after");
+    const expected = document.getElementById("expected");
+    const predictedCopy = document.getElementById("predictedCopy");
+    const compare = document.getElementById("compare");
+    const diffBody = document.getElementById("diffBody");
+    const board = document.getElementById("board");
+    const boardSummary = document.getElementById("boardSummary");
+    const boardBody = document.getElementById("boardBody");
+    let cases = [];
+    let currentExpected = null;
+
+    function setBusy(busy) {
+      run.disabled = busy;
+      runAll.disabled = busy;
+    }
+
+    function setStatus(text, kind) {
+      status.textContent = text;
+      status.className = kind || "";
+    }
+
+    function renderDiff(details) {
+      diffBody.innerHTML = "";
+      for (const row of details) {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + row.item + "</td>" +
+          "<td>" + row.gold + "</td>" +
+          "<td>" + row.ai + "</td>" +
+          "<td class=\"" + (row.ok ? "pass" : "fail") + "\">" + (row.ok ? "✓" : "✗") + "</td>";
+        diffBody.appendChild(tr);
+      }
+    }
+
+    function renderGoldPreview(exp) {
+      const rows = [
+        {item: "Số decisions", gold: String(exp.decisions.length), ai: "chưa chạy", ok: null},
+        {item: "Số actions", gold: String(exp.actions.length), ai: "chưa chạy", ok: null},
+      ];
+      exp.actions.forEach((a, i) => {
+        rows.push({
+          item: "Action " + (i + 1) + " (owner + due_date)",
+          gold: a.owner + " / " + a.due_date,
+          ai: "chưa chạy",
+          ok: null,
+        });
+      });
+      diffBody.innerHTML = "";
+      for (const row of rows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + row.item + "</td>" +
+          "<td>" + row.gold + "</td>" +
+          "<td>" + row.ai + "</td>" +
+          "<td>—</td>";
+        diffBody.appendChild(tr);
+      }
+    }
+
+    async function show() {
+      const c = cases.find(x => x.id === select.value);
+      input.value = c ? c.input : "";
+      setStatus("", "");
+      result.textContent = "Chọn case rồi bấm Run.";
+      predictedCopy.textContent = "Chưa chạy. Bấm Run.";
+      compare.textContent = "Bấm Run để chấm";
+      compare.className = "";
+      currentExpected = null;
+      expected.textContent = "Đang tải gold...";
+      diffBody.innerHTML = "";
+      if (!c) return;
+      try {
+        const r = await fetch("/demo-api/cases/" + encodeURIComponent(c.id) + "/expected");
+        const exp = await r.json();
+        if (!r.ok) {
+          expected.textContent = JSON.stringify(exp);
+          return;
+        }
+        currentExpected = exp;
+        expected.textContent = JSON.stringify(exp, null, 2);
+        renderGoldPreview(exp);
+      } catch (e) {
+        expected.textContent = String(e);
+      }
+    }
+
+    async function analyzeOne(caseId, meetingText) {
+      const r = await fetch("/analyze-meeting", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({meeting_text: meetingText}),
+      });
+      const body = await r.json();
+      if (!r.ok) {
+        return {ok: false, body, pass: false, reason: "HTTP " + r.status, expected: null, details: []};
+      }
+      const cmp = await fetch("/demo-api/compare", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({case_id: caseId, predicted: body}),
+      });
+      const data = await cmp.json();
+      if (!cmp.ok) {
+        return {ok: true, body, pass: false, reason: "compare lỗi", expected: null, details: []};
+      }
+      return {
+        ok: true,
+        body,
+        pass: data.pass,
+        reason: data.pass ? "Khớp số decisions/actions và owner+due_date" : data.reason,
+        expected: data.expected,
+        details: data.details || [],
+      };
+    }
+
+    async function runCase() {
+      setBusy(true);
+      setStatus("Đang chạy...", "busy");
+      result.textContent = "";
+      predictedCopy.textContent = "Đang chạy...";
+      compare.textContent = "...";
+      compare.className = "busy";
+      try {
+        const out = await analyzeOne(select.value, input.value);
+        setStatus(out.ok ? "HTTP 200" : out.reason, out.pass ? "ok" : "err");
+        result.textContent = JSON.stringify(out.body, null, 2);
+        predictedCopy.textContent = JSON.stringify(out.body, null, 2);
+        if (out.expected) {
+          currentExpected = out.expected;
+          expected.textContent = JSON.stringify(out.expected, null, 2);
+          compare.textContent = out.pass ? "PASS" : "FAIL";
+          compare.className = out.pass ? "ok" : "err";
+          renderDiff(out.details);
+        }
+      } catch (e) {
+        setStatus("Lỗi mạng", "err");
+        result.textContent = String(e);
+        predictedCopy.textContent = String(e);
+        compare.textContent = "FAIL";
+        compare.className = "err";
+      }
+      setBusy(false);
+    }
+
+    async function runAllCases() {
+      setBusy(true);
+      board.classList.add("visible");
+      boardBody.innerHTML = "";
+      boardSummary.textContent = "0/" + cases.length;
+      let passed = 0;
+
+      for (let i = 0; i < cases.length; i++) {
+        const c = cases[i];
+        select.value = c.id;
+        input.value = c.input;
+        setStatus("Run all " + (i + 1) + "/" + cases.length + " · " + c.id, "busy");
+        result.textContent = "Đang chạy " + c.id + "...";
+        predictedCopy.textContent = "Đang chạy " + c.id + "...";
+        compare.textContent = "...";
+        compare.className = "busy";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = "<td>" + c.id + "</td><td>" + c.group + "</td><td>...</td><td>đang chạy</td>";
+        boardBody.appendChild(tr);
+
+        let out;
+        try {
+          out = await analyzeOne(c.id, c.input);
+        } catch (e) {
+          out = {ok: false, body: String(e), pass: false, reason: "Lỗi mạng", expected: null, details: []};
+        }
+
+        if (out.pass) passed += 1;
+        tr.children[2].textContent = out.pass ? "PASS" : "FAIL";
+        tr.children[2].className = out.pass ? "pass" : "fail";
+        tr.children[3].textContent = out.reason;
+        boardSummary.textContent = passed + "/" + (i + 1) + " (gate ≥17)";
+        result.textContent = JSON.stringify(out.body, null, 2);
+        predictedCopy.textContent = JSON.stringify(out.body, null, 2);
+
+        if (out.expected) {
+          currentExpected = out.expected;
+          expected.textContent = JSON.stringify(out.expected, null, 2);
+          compare.textContent = out.pass ? "PASS" : "FAIL";
+          compare.className = out.pass ? "ok" : "err";
+          renderDiff(out.details);
+        }
+      }
+
+      setStatus("Run all xong: " + passed + "/" + cases.length, passed >= 17 ? "ok" : "err");
+      setBusy(false);
+    }
+
+    fetch("/demo-api/cases")
+      .then(r => r.json())
+      .then(data => {
+        cases = data;
+        for (const c of data) {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = `${c.id} – ${c.title} (${c.group})`;
+          select.appendChild(opt);
+        }
+        show();
+      });
+
+    select.addEventListener("change", show);
+    run.addEventListener("click", runCase);
+    runAll.addEventListener("click", runAllCases);
+  </script>
+</body>
+</html>

@@ -9,7 +9,7 @@ class MeetingRequest(BaseModel):
 class ActionItem(BaseModel):
     owner: str | None  # không rõ thì None, không đoán
     action: str
-    due_date: str | None  # giữ nguyên chuỗi gốc, không đổi sang ISO
+    due_date: str | None  # YYYY-MM-DD hoặc null (ngày tương đối / không rõ → null)
 
 class Summary(BaseModel):
     summary: str

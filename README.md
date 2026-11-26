@@ -23,6 +23,41 @@ Commands and results: [evidence/w0/w0_kickoff.md](evidence/w0/w0_kickoff.md).
 - Error reasons: [evidence/w1/w1_error_reasons.md](evidence/w1/w1_error_reasons.md)
 - Score: `python scripts/evaluate_issue_classifier.py evidence/w1/w1_predictions_v3.csv`
 
+### W2 LLM API & structured output (GATE 1)
+Provider: OpenAI. W1 model: `OPENAI_MODEL` (ví dụ `gpt-4.1`). W2 model: `W2_MODEL` (ví dụ `gpt-6-luna`). Cần `OPENAI_API_KEY` và `OPENAI_BASE_URL=https://api.openai.com/v1`.
+
+Chạy API + demo (từ thư mục gốc repo):
+```bash
+env $(grep -E "^(OPENAI_API_KEY|OPENAI_BASE_URL|W2_MODEL)=" .env | xargs) .venv/bin/uvicorn app.main:app --port 8000
+```
+- OpenAPI: `http://127.0.0.1:8000/docs`
+- Demo UI: `http://127.0.0.1:8000/demo`
+
+Gọi thử:
+```bash
+curl -s -X POST http://127.0.0.1:8000/analyze-meeting \
+  -H 'Content-Type: application/json' \
+  -d '{"meeting_text":"Meeting Date: 2026-11-23\nAttendees: Phu, Hung\n\nThe team agreed to prioritize the login bug. Phu will fix authentication by November 25, 2026."}'
+```
+
+| Tình huống | HTTP |
+|---|---|
+| Input rỗng / dưới 20 ký tự | 422 |
+| Timeout upstream | 504 |
+| Rate limit (429) | 429 |
+| Upstream 5xx / lỗi kết nối | 502 |
+| JSON sai khuôn sau retry | 502 |
+
+Test và eval:
+```bash
+.venv/bin/python -m pytest -q tests/test_w2_errors.py tests/test_mock_jira.py
+.venv/bin/python scripts/evaluate_w2_meetings.py
+```
+- Walkthrough: [evidence/w2/w2_walkthrough.md](evidence/w2/w2_walkthrough.md)
+- Eval JSON: [evidence/w2/w2_eval.json](evidence/w2/w2_eval.json)
+- Error reasons: [evidence/w2/w2_error_reasons.md](evidence/w2/w2_error_reasons.md)
+- HTTP examples: [evidence/w2/analyze_meeting.http](evidence/w2/analyze_meeting.http)
+
 ### Resource map
 - `data/documents/`: 15 synthetic documents plus manifest (5 requirements, 5 technical, 5 PM)
 - `data/jira/issues.json`: 30 sample issue records for Projects ALPHA/BETA/GAMMA
