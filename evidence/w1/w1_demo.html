@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W1: Phân loại issue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* === STAGE: khung 1920×1080, phóng cả slide, không xếp lại chữ theo màn hình === */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #010409; }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: #010409; }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: #0d1117; }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: #0d1117; }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls, .edit-hotzone, .edit-toggle { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* === MÀU VÀ CHỮ: sửa ở đây nếu muốn đổi màu === */
+:root {
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-bar: #21262d;
+  --line: #30363d;
+  --text: #c9d1d9;
+  --title: #e6edf3;
+  --dim: #6e7681;
+  --green: #39d353;
+  --red: #ff7b72;
+  --amber: #e3b341;
+}
+.slide { color: var(--text); font-family: "JetBrains Mono", monospace; }
+.slide::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(57, 211, 83, 0.03) 0 2px, transparent 2px 4px); }
+
+.kicker { position: absolute; left: 120px; top: 92px; margin: 0; font-size: 26px; color: var(--green); letter-spacing: 0.06em; }
+h1, h2 { position: absolute; left: 120px; margin: 0; font-weight: 700; color: var(--title); }
+h1 { top: 146px; font-size: 64px; line-height: 1.1; }
+h2 { top: 146px; font-size: 64px; line-height: 1.1; }
+.sub { position: absolute; left: 120px; top: 268px; margin: 0; font-size: 30px; color: #8b949e; }
+
+/* === CỬA SỔ TERMINAL === */
+.win { position: absolute; left: 120px; top: 360px; width: 1680px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.bar { height: 52px; background: var(--panel-bar); display: flex; align-items: center; gap: 12px; padding: 0 22px; font-size: 22px; color: #8b949e; }
+.dot { width: 16px; height: 16px; border-radius: 50%; }
+.dot.r { background: #ff5f56; }
+.dot.y { background: #ffbd2e; }
+.dot.g { background: #27c93f; }
+.bar .title { margin-left: 14px; }
+.term { padding: 36px 44px 40px; font-size: 34px; line-height: 1.55; }
+.ln { white-space: pre; }
+.p { color: var(--green); }
+.c { color: var(--dim); }
+.ok { color: var(--green); }
+.bad { color: var(--red); }
+.hl { color: var(--amber); }
+.cur { display: inline-block; width: 18px; height: 34px; background: var(--green); vertical-align: middle; animation: blink 1s steps(2) infinite; }
+@keyframes blink { to { visibility: hidden; } }
+
+/* Nội dung hiện lần lượt từng dòng */
+.reveal { opacity: 0; transform: translateY(14px); }
+.ln { opacity: 0; transform: translateY(10px); }
+.slide.visible .reveal, .slide.visible .ln { opacity: 1; transform: none; transition: opacity 0.45s ease, transform 0.45s ease; transition-delay: calc(var(--i, 0) * 0.14s); }
+
+/* Ba cửa sổ điểm số (slide 4) */
+.win.col { width: 540px; top: 360px; }
+.win.col .term { font-size: 26px; padding: 30px 28px; }
+.win.col .bar { font-size: 20px; }
+.win.col .ln { white-space: pre; }
+
+/* === NÚT SỬA: rê góc trái hoặc bấm E === */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 18px; left: 18px; opacity: 0; pointer-events: none; z-index: 10001; border: 0; background: var(--green); color: #0d1117; font-family: "JetBrains Mono", monospace; font-size: 16px; padding: 8px 14px; cursor: pointer; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.deck-controls { color: var(--dim); font-family: "JetBrains Mono", monospace; font-size: 14px; letter-spacing: 0.08em; }
+[contenteditable="true"] { outline: 1px dashed var(--green); }
+</style>
+</head>
+<body>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" type="button" title="Sửa chữ (E)">Sửa</button>
+<div class="deck-viewport">
+  <main class="deck-stage" id="deckStage">
+    <!-- Slide 1: mục lục -->
+    <section class="slide" aria-label="Mục lục">
+      <p class="kicker reveal ed">W1 · 16–20/11/2026 · gpt-4.1, temperature 0</p>
+      <h1 class="reveal ed">W1: Prompt engineering cho phân loại issue</h1>
+      <p class="sub reveal ed">20 issue public trong kit. Ba prompt. Một bộ chấm.</p>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">muc_luc.txt</span></div>
+        <div class="term">
+          <div class="ln ed"><span class="p">$</span> cat muc_luc.txt</div>
+          <div class="ln ed">01  Bộ data mẫu</div>
+          <div class="ln ed">02  Bài toán và điều kiện đạt</div>
+          <div class="ln ed">03  Ba prompt: V1, V2, V3</div>
+          <div class="ln ed">04  Một case: CASE-16</div>
+          <div class="ln ed">05  Điểm của ba prompt</div>
+          <div class="ln ed">06  Case khác nhau giữa ba prompt</div>
+          <div class="ln ed">07  Vì sao V3 tốt hơn V1 và V2</div>
+          <div class="ln ed">08  Giới hạn của điểm này</div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">01 / 09</div>
+    </section>
+
+    <!-- Slide 2: bộ data -->
+    <section class="slide" aria-label="Bộ data mẫu">
+      <p class="kicker reveal ed">01 · Bộ data mẫu</p>
+      <h2 class="reveal ed">20 issue giả, public trong kit</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">issue_classification_gold.json</span></div>
+        <div class="term">
+          <div class="ln ed">Category   Bug 5 · Feature 5 · Question 5 · Risk 5</div>
+          <div class="ln ed">Priority   P1 6 · P2 7 · P3 7</div>
+          <div class="ln ed">Mỗi issue có issue_id, text, category, priority</div>
+          <div class="ln ed"><span class="c"># Không có dữ liệu khách hàng hay dự án thật.</span></div>
+          <div class="ln ed"><span class="c"># AI Lead giữ 20–30% case ẩn ngoài kit. Lần này chưa chấm tập đó.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">02 / 09</div>
+    </section>
+
+    <!-- Slide 3: bài toán -->
+    <section class="slide" aria-label="Bài toán">
+      <p class="kicker reveal ed">02 · Bài toán</p>
+      <h2 class="reveal ed">Gán category và priority cho 20 issue</h2>
+      <p class="sub reveal ed">Kiểm tra trên V3.</p>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">điều kiện · V3</span></div>
+        <div class="term">
+          <div class="ln ed"><span class="ok">[PASS]</span> category  20/20   cần ít nhất 17/20</div>
+          <div class="ln ed"><span class="ok">[PASS]</span> schema    20/20   cần 20/20</div>
+          <div class="ln ed"><span class="ok">[PASS]</span> P1 bỏ sót không   cần không</div>
+          <div class="ln ed"><span class="c">[ -- ]</span> <span class="c">priority  18/20   không có ngưỡng đạt</span></div>
+          <div class="ln ed"><span class="c"># Sáu case P1: CASE-01, 02, 03, 04, 14, 16</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">03 / 09</div>
+    </section>
+
+    <!-- Slide 4: ba prompt -->
+    <section class="slide" aria-label="Ba prompt">
+      <p class="kicker reveal ed">03 · Ba prompt</p>
+      <h2 class="reveal ed">V1, V2, V3 khác nhau ở đâu</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">prompts/w1</span></div>
+        <div class="term">
+          <div class="ln ed">V1  định nghĩa P1, P2, P3 ban đầu</div>
+          <div class="ln ed">V2  chỉ sửa định nghĩa P1</div>
+          <div class="ln ed">V3  sửa tiếp P1, P2, P3</div>
+          <div class="ln ed"><span class="c"># Mỗi prompt chạy 20 request. Bộ chấm so CSV với gold, không gọi model.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">04 / 09</div>
+    </section>
+
+    <!-- Slide 5: CASE-16 -->
+    <section class="slide" aria-label="Một case">
+      <p class="kicker reveal ed">04 · Một case</p>
+      <h2 class="reveal ed">CASE-16: không có phương án dự phòng OAuth</h2>
+      <p class="sub reveal ed">Gold là P1. V1 ra P2. V2 và V3 ra P1.</p>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">CASE-16</span></div>
+        <div class="term">
+          <div class="ln ed"><span class="p">$</span> .venv/bin/python scripts/classify_one.py CASE-16 prompts/w1/v3.md</div>
+          <div class="ln ed"><span class="c">gold   Risk  P1</span></div>
+          <div class="ln ed">V1     Risk  <span class="bad">P2</span>   <span class="bad"># bỏ sót P1</span></div>
+          <div class="ln ed">V2     Risk  <span class="ok">P1</span>   <span class="ok"># khớp gold</span></div>
+          <div class="ln ed">V3     Risk  <span class="ok">P1</span>   <span class="ok"># khớp gold</span></div>
+          <div class="ln ed"><span class="c"># V1, V2, V3 lấy từ CSV đã chấm.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">05 / 09</div>
+    </section>
+
+    <!-- Slide 6: điểm -->
+    <section class="slide" aria-label="Điểm">
+      <p class="kicker reveal ed">05 · Điểm</p>
+      <h2 class="reveal ed">Cùng 20 case, ba prompt</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">score · 20 case</span></div>
+        <div class="term">
+          <div class="ln ed"><span class="c">            V1          V2          V3</span></div>
+          <div class="ln ed">category    <span class="ok">20/20</span>       <span class="ok">20/20</span>       <span class="ok">20/20</span>       </div>
+          <div class="ln ed">schema      <span class="ok">20/20</span>       <span class="ok">20/20</span>       <span class="ok">20/20</span>       </div>
+          <div class="ln ed">priority    <span class="bad">16/20</span>       <span class="bad">15/20</span>       <span class="hl">18/20</span>       </div>
+          <div class="ln ed">P1 bỏ sót   <span class="bad">CASE-16</span>     <span class="ok">không</span>       <span class="ok">không</span>       </div>
+          <div class="ln ed"><span class="c"># Đề chấm category, schema và P1. Priority không có ngưỡng đạt.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">06 / 09</div>
+    </section>
+
+    <!-- Slide 7: các case khác nhau -->
+    <section class="slide" aria-label="Case khác nhau">
+      <p class="kicker reveal ed">06 · Case khác nhau</p>
+      <h2 class="reveal ed">8 case, ba prompt cho ba kết quả</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">priority · gold so với V1, V2, V3</span></div>
+        <div class="term" style="font-size:26px">
+          <div class="ln ed"><span class="c">case     gold     V1       V2       V3</span></div>
+          <div class="ln ed">CASE-07  <span class="c">P2</span>       <span class="bad">P3</span>       <span class="bad">P3</span>       <span class="ok">P2</span>       </div>
+          <div class="ln ed">CASE-08  <span class="c">P3</span>       <span class="ok">P3</span>       <span class="bad">P2</span>       <span class="ok">P3</span>       </div>
+          <div class="ln ed">CASE-12  <span class="c">P2</span>       <span class="bad">P3</span>       <span class="bad">P3</span>       <span class="ok">P2</span>       </div>
+          <div class="ln ed">CASE-13  <span class="c">P2</span>       <span class="bad">P1</span>       <span class="bad">P1</span>       <span class="ok">P2</span>       </div>
+          <div class="ln ed">CASE-16  <span class="c">P1</span>       <span class="bad">P2</span>       <span class="ok">P1</span>       <span class="ok">P1</span>       </div>
+          <div class="ln ed">CASE-17  <span class="c">P2</span>       <span class="ok">P2</span>       <span class="ok">P2</span>       <span class="bad">P1</span>       </div>
+          <div class="ln ed">CASE-18  <span class="c">P2</span>       <span class="ok">P2</span>       <span class="ok">P2</span>       <span class="bad">P3</span>       </div>
+          <div class="ln ed">CASE-20  <span class="c">P2</span>       <span class="ok">P2</span>       <span class="bad">P1</span>       <span class="ok">P2</span>       </div>
+          <div class="ln ed"><span class="c"># Đúng trong 8 case này: V1 4/8, V2 3/8, V3 6/8.</span></div>
+          <div class="ln ed"><span class="c"># 12 case còn lại: cả ba prompt đều khớp gold.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">07 / 09</div>
+    </section>
+
+    <!-- Slide 8: vì sao V3 tốt hơn -->
+    <section class="slide" aria-label="Vì sao V3 tốt hơn">
+      <p class="kicker reveal ed">07 · Vì sao V3 tốt hơn</p>
+      <h2 class="reveal ed">V3 tốt hơn V1 và V2 ở định nghĩa priority</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">prompts/w1 · P1 P2 P3</span></div>
+        <div class="term" style="font-size:28px">
+          <div class="ln ed">V1  P1 chỉ nói "nhiều user hoặc chặn go-live".</div>
+          <div class="ln ed"><span class="c">    CASE-16 thành P2. Priority 16/20. Bỏ sót một P1.</span></div>
+          <div class="ln ed">V2  P1 thêm "không có phương án dự phòng".</div>
+          <div class="ln ed"><span class="c">    CASE-16 về P1. CASE-08 lên P2, CASE-20 lên P1. Priority 15/20.</span></div>
+          <div class="ln ed">V3  P1 ghi rõ phương án dự phòng khi đăng nhập hỏng.</div>
+          <div class="ln ed"><span class="c">    P2 ghi rõ field báo cáo, ai duyệt sự cố, rủi ro "có thể".</span></div>
+          <div class="ln ed"><span class="ok">    CASE-07, 08, 12, 13, 16, 20 đúng. Priority 18/20.</span></div>
+          <div class="ln ed"><span class="bad">    Đổi lại V3 sai CASE-17 và CASE-18.</span></div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">08 / 09</div>
+    </section>
+
+    <!-- Slide 9: giới hạn -->
+    <section class="slide" aria-label="Giới hạn">
+      <p class="kicker reveal ed">08 · Giới hạn</p>
+      <h2 class="reveal ed">Ba giới hạn của điểm V3</h2>
+      <div class="win">
+        <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title">limits.txt</span></div>
+        <div class="term" style="font-size:30px">
+          <div class="ln ed">1  V3 được sửa sau khi đã xem lỗi V2, trên đúng 20 case này.</div>
+          <div class="ln ed">2  Chạy lại cùng prompt ra số khác.</div>
+          <div class="ln ed"><span class="c">   19/20: chỉ sai CASE-07. 18/20: sai CASE-17 và CASE-18.</span></div>
+          <div class="ln ed"><span class="c">   File đang giữ là lần 18/20.</span></div>
+          <div class="ln ed">3  CSV chỉ lưu nhãn. Không lưu lý do model chọn nhãn đó.</div>
+        </div>
+      </div>
+      <div class="num" style="position:absolute;right:120px;bottom:56px;font-size:24px;color:var(--dim)">09 / 09</div>
+    </section>
+  </main>
+</div>
+<nav class="deck-controls" aria-label="Slide position"><span id="pager">01 / 09</span></nav>
+<script>
+/* === PHÓNG KHUNG VÀ CHUYỂN SLIDE: mũi tên, Space, lăn chuột, vuốt === */
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.stage = document.getElementById('deckStage');
+    this.pager = document.getElementById('pager');
+    this.wheelLock = false;
+    this.slides.forEach((s) => s.querySelectorAll('.ln').forEach((el, i) => el.style.setProperty('--i', i)));
+    this.setupStageScale();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    const start = Number((location.hash || '').replace('#', ''));
+    this.showSlide(Number.isFinite(start) && start > 0 ? start - 1 : 0);
+  }
+  setupStageScale() {
+    const scale = () => {
+      const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      const x = (window.innerWidth - 1920 * factor) / 2;
+      const y = (window.innerHeight - 1080 * factor) / 2;
+      this.stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + factor + ')';
+    };
+    scale();
+    window.addEventListener('resize', scale);
+  }
+  setupKeyboardNav() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable') === 'true') return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); this.showSlide(this.currentSlide + 1); }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.showSlide(this.currentSlide - 1); }
+    });
+  }
+  setupWheelNav() {
+    window.addEventListener('wheel', (e) => {
+      if (this.wheelLock || Math.abs(e.deltaY) < 20) return;
+      this.wheelLock = true;
+      this.showSlide(this.currentSlide + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(() => { this.wheelLock = false; }, 500);
+    }, { passive: true });
+  }
+  setupTouchNav() {
+    let x0 = null;
+    window.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      if (x0 == null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) this.showSlide(this.currentSlide + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+  }
+  showSlide(index) {
+    this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+    this.slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === this.currentSlide);
+      slide.classList.toggle('visible', i === this.currentSlide);
+    });
+    const n = String(this.currentSlide + 1).padStart(2, '0');
+    this.pager.textContent = n + ' / ' + String(this.slides.length).padStart(2, '0');
+  }
+}
+
+/* === SỬA CHỮ: rê góc trái hoặc bấm E. Ctrl+S tải file HTML hiện tại. === */
+class TextEditor {
+  constructor() {
+    this.isActive = false;
+    document.querySelectorAll('.ed').forEach((el, i) => { el.dataset.edit = 'e' + i; });
+    this.nodes = document.querySelectorAll('[data-edit]');
+    this.restore();
+    this.nodes.forEach((node) => node.addEventListener('input', () => this.persist()));
+  }
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    this.nodes.forEach((node) => node.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+    document.getElementById('editToggle').classList.toggle('active', this.isActive);
+  }
+  persist() {
+    const data = {};
+    this.nodes.forEach((node) => { data[node.dataset.edit] = node.innerHTML; });
+    localStorage.setItem('w1-demo-vi-v4', JSON.stringify(data));
+  }
+  restore() {
+    const raw = localStorage.getItem('w1-demo-vi-v4');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    this.nodes.forEach((node) => {
+      if (data[node.dataset.edit]) node.innerHTML = data[node.dataset.edit];
+    });
+  }
+}
+
+const deck = new SlidePresentation();
+const editor = new TextEditor();
+const editToggle = document.getElementById('editToggle');
+const hotzone = document.querySelector('.edit-hotzone');
+let hideTimeout = null;
+editToggle.addEventListener('click', () => editor.toggleEditMode());
+hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
+hotzone.addEventListener('mouseleave', () => {
+  hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+editToggle.addEventListener('mouseleave', () => {
+  hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+hotzone.addEventListener('click', () => editor.toggleEditMode());
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') editor.toggleEditMode();
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    editor.persist();
+    const blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'w1_demo.html';
+    a.click();
+  }
+});
+</script>
+</body>
+</html>
