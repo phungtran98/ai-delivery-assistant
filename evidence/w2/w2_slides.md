@@ -20,21 +20,56 @@ Member: _(điền tên)_ · Nhánh `w2`
 
 ## 2. Kiến trúc
 
+### Workflow chính — `POST /analyze-meeting`
+
 ```text
 Client
+  │  meeting_text
+  ▼
+FastAPI (main.py)
   │
-  ├─ POST /analyze-meeting ──► llm.analyze() ──► OpenAI (json_schema strict)
-  │                                    │
-  │                                    ▼
-  │                              Pydantic Summary ──► 200
-  │                              lỗi ──► 422 / 504 / 429 / 502
+  ├─ meeting_text < 20 ký tự ──────────────────────────► 422
   │
-  └─ Demo /demo
-        ├─ /demo-api/compare      → PASS/FAIL (Gate)
-        └─ /demo-api/judge-summary → đúng nghĩa summary (không tính Gate)
+  └─ llm.analyze()  (services/llm.py)
+        │
+        ├─ OpenAI chat.completions
+        │    response_format = json_schema strict
+        │
+        ├─ timeout ────────────────────────────────────► 504
+        ├─ rate_limit ─────────────────────────────────► 429
+        ├─ lỗi upstream ───────────────────────────────► 502
+        │
+        └─ content JSON
+              │
+              ├─ Pydantic Summary OK ──────────────────► 200
+              ├─ JSON hỏng → retry ≤ 2 lần
+              └─ vẫn hỏng ─────────────────────────────► 502 bad_output
 ```
 
-**Modules:** `schemas` · `services/llm` · `scoring.check` · `main` · `static/demo.html`
+### Workflow demo — `/demo`
+
+```text
+Chọn case → Run
+  │
+  ├─ 1) POST /analyze-meeting     → lấy Summary AI
+  ├─ 2) POST /demo-api/compare    → scoring.check() → PASS/FAIL (Gate)
+  └─ 3) [tuỳ chọn] Chấm summary
+           POST /demo-api/judge-summary
+             → openai judge_summary() → same_meaning true|false
+             → không đổi PASS/FAIL
+```
+
+### Giải thích nhanh
+
+| Tầng | Vai trò |
+|---|---|
+| `main.py` | Route HTTP, map `LLMError` → 422/504/429/502 |
+| `schemas.py` | `MeetingRequest` (≥20 ký tự), `Summary`, `ActionItem` |
+| `services/llm.py` | `analyze()` extract + `judge_summary()` so nghĩa |
+| `scoring.py` | `check()` — số decisions/actions + cặp `(owner, due_date)` |
+| `static/demo.html` | UI Run / Run all / Chấm summary |
+
+Hai đường chấm tách biệt: **Gate** = rule Python (`check`); **summary** = model làm giám khảo (`openai` SDK + structured `{same_meaning}`), chỉ quan sát trên demo.
 
 ---
 
