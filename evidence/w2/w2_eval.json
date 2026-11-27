@@ -1,0 +1,473 @@
+{
+  "passed": 20,
+  "schema_ok": 20,
+  "summary_ok": null,
+  "summary_judge": "deferred",
+  "judge_errors": 0,
+  "rows": [
+    {
+      "id": "TC01",
+      "group": "Normal",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed the sprint backlog and agreed to prioritize the login bug.",
+        "decisions": [
+          "Prioritize the login bug."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Fix the login authentication issue.",
+            "due_date": "2026-11-25"
+          },
+          {
+            "owner": "Hung",
+            "action": "Review the pull request.",
+            "due_date": "2026-11-26"
+          },
+          {
+            "owner": "Minh",
+            "action": "Prepare regression test cases.",
+            "due_date": "2026-11-27"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC02",
+      "group": "Normal",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team decided to deploy version 2.5 to production on November 27, 2026. Lan will prepare the deployment checklist, Hung will execute the deployment, and Phu will verify application health afterward.",
+        "decisions": [
+          "Deploy version 2.5 to production on 2026-11-27."
+        ],
+        "actions": [
+          {
+            "owner": "Lan",
+            "action": "Prepare the deployment checklist.",
+            "due_date": "2026-11-25"
+          },
+          {
+            "owner": "Hung",
+            "action": "Execute the deployment.",
+            "due_date": "2026-11-27"
+          },
+          {
+            "owner": "Phu",
+            "action": "Verify application health after deployment.",
+            "due_date": "2026-11-27"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC03",
+      "group": "Normal",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team agreed to add an index to the orders table to improve query performance. Minh will create the database migration, Phu will benchmark query performance, and An will review the migration before deployment.",
+        "decisions": [
+          "Add an index to the orders table to improve query performance."
+        ],
+        "actions": [
+          {
+            "owner": "Minh",
+            "action": "Create the database migration.",
+            "due_date": "2026-11-27"
+          },
+          {
+            "owner": "Phu",
+            "action": "Benchmark the query performance.",
+            "due_date": "2026-11-30"
+          },
+          {
+            "owner": "An",
+            "action": "Review the migration before deployment.",
+            "due_date": "2026-11-28"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC04",
+      "group": "Normal",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The security scan found vulnerable Ruby dependencies. The team plans to upgrade the affected gems before the next release, verify the results, and document the security changes.",
+        "decisions": [
+          "Upgrade the affected gems before the next release."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Update the vulnerable dependencies.",
+            "due_date": "2026-11-30"
+          },
+          {
+            "owner": "Hung",
+            "action": "Run bundle-audit and verify the results.",
+            "due_date": "2026-12-01"
+          },
+          {
+            "owner": "Lan",
+            "action": "Document the security changes.",
+            "due_date": "2026-12-02"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC05",
+      "group": "Normal",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed API latency and agreed to implement Redis caching for frequently accessed endpoints.",
+        "decisions": [
+          "Implement Redis caching for frequently accessed endpoints."
+        ],
+        "actions": [
+          {
+            "owner": "Minh",
+            "action": "Implement caching.",
+            "due_date": "2026-12-02"
+          },
+          {
+            "owner": "An",
+            "action": "Add performance tests.",
+            "due_date": "2026-12-03"
+          },
+          {
+            "owner": "Hung",
+            "action": "Review the changes.",
+            "due_date": "2026-12-04"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC06",
+      "group": "Missing information",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "Hung will review the authentication pull request, and Phu will address any feedback. No deadlines were agreed on for either task.",
+        "decisions": [],
+        "actions": [
+          {
+            "owner": "Hung",
+            "action": "Review the authentication pull request.",
+            "due_date": null
+          },
+          {
+            "owner": "Phu",
+            "action": "Address any feedback from the review.",
+            "due_date": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC07",
+      "group": "Missing information",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed improving the API documentation. The endpoint descriptions will be updated by November 30, 2026.",
+        "decisions": [
+          "The API documentation needs improvement."
+        ],
+        "actions": [
+          {
+            "owner": null,
+            "action": "Update the endpoint descriptions.",
+            "due_date": "2026-11-30"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC08",
+      "group": "Missing information",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed server monitoring alerts, including high CPU usage and database connection pool settings.",
+        "decisions": [],
+        "actions": [
+          {
+            "owner": "An",
+            "action": "Investigate the high CPU usage.",
+            "due_date": null
+          },
+          {
+            "owner": "Hung",
+            "action": "Check the database connection pool settings.",
+            "due_date": "2026-11-27"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC09",
+      "group": "Missing information",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed improving code quality and reducing technical debt. They agreed that refactoring is necessary, but assigned no tasks and established no implementation dates.",
+        "decisions": [
+          "Refactoring is necessary."
+        ],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC10",
+      "group": "Ambiguous",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "Phu suggested upgrading the application to Rails 8.1. Hung raised backward-compatibility concerns, and Minh said the team might consider an upgrade next quarter. No final decision or implementation tasks were recorded.",
+        "decisions": [],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC11",
+      "group": "Ambiguous",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed possibly migrating background jobs to AWS Lambda. Lan suggested AWS Step Functions for orchestration, and Hung said more research would be helpful. The team has not decided whether to proceed with the migration.",
+        "decisions": [],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC12",
+      "group": "Ambiguous",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed adding dark mode to the application. Minh said it could improve user experience; Phu suggested including it in the next sprint, while Hung recommended waiting for customer feedback. The decision was postponed until the next planning meeting.",
+        "decisions": [],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC13",
+      "group": "Ambiguous",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed replacing some integration tests with unit tests to reduce execution time. Lan agreed to investigate the feasibility. The team did not decide whether to change the overall testing strategy.",
+        "decisions": [],
+        "actions": [
+          {
+            "owner": "Lan",
+            "action": "Investigate the feasibility of replacing some integration tests with unit tests.",
+            "due_date": "2026-11-30"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC14",
+      "group": "Complex",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed the upcoming release and identified database migration failures and API compatibility issues as major risks. The release was postponed to December 7, 2026.",
+        "decisions": [
+          "Postpone the release to December 7, 2026.",
+          "Do not proceed with production deployment until all critical tests pass."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Validate the database migrations.",
+            "due_date": "2026-12-02"
+          },
+          {
+            "owner": "Hung",
+            "action": "Perform API compatibility testing.",
+            "due_date": "2026-12-03"
+          },
+          {
+            "owner": "Minh",
+            "action": "Prepare a rollback plan.",
+            "due_date": "2026-12-04"
+          },
+          {
+            "owner": "Lan",
+            "action": "Update the release documentation.",
+            "due_date": "2026-12-05"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC15",
+      "group": "Complex",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team discussed improvements to the authentication module, including token refresh handling, automated tests, security review, documentation, and additional validation before release.",
+        "decisions": [
+          "The authentication module needs improvement.",
+          "Additional security validation is required before releasing authentication changes."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Work on implementing token refresh handling.",
+            "due_date": "2026-12-04"
+          },
+          {
+            "owner": "Hung",
+            "action": "Work on implementing token refresh handling.",
+            "due_date": "2026-12-04"
+          },
+          {
+            "owner": "Minh",
+            "action": "Create automated authentication tests.",
+            "due_date": "2026-12-05"
+          },
+          {
+            "owner": "An",
+            "action": "Review security risks.",
+            "due_date": "2026-12-06"
+          },
+          {
+            "owner": "Phu",
+            "action": "Update the technical documentation.",
+            "due_date": "2026-12-07"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC16",
+      "group": "Complex",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team moved the payment integration deadline to December 9, 2026, because additional testing was needed. Phu will finish the integration, Hung will complete integration testing, and Lan will notify stakeholders of the revised schedule.",
+        "decisions": [
+          "Move the payment integration deadline to December 9, 2026."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Finish the integration.",
+            "due_date": "2026-12-07"
+          },
+          {
+            "owner": "Hung",
+            "action": "Complete integration testing.",
+            "due_date": "2026-12-09"
+          },
+          {
+            "owner": "Lan",
+            "action": "Notify stakeholders about the revised schedule.",
+            "due_date": "2026-12-03"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC17",
+      "group": "Complex",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed the December 2 production outage caused by an exhausted database connection pool and discussed corrective steps.",
+        "decisions": [
+          "Increase the database connection pool limit.",
+          "Add monitoring alerts for the connection pool.",
+          "Do not proceed with moving the database to a larger server for now."
+        ],
+        "actions": [
+          {
+            "owner": "Phu",
+            "action": "Update the database configuration.",
+            "due_date": "2026-12-04"
+          },
+          {
+            "owner": "Hung",
+            "action": "Implement connection pool monitoring.",
+            "due_date": "2026-12-05"
+          },
+          {
+            "owner": "Minh",
+            "action": "Add load tests.",
+            "due_date": "2026-12-07"
+          },
+          {
+            "owner": "Lan",
+            "action": "Prepare the incident report.",
+            "due_date": "2026-12-08"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TC18",
+      "group": "Edge cases",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The team reviewed sprint progress. All previously assigned tasks were completed successfully, API performance remained stable, and no production incidents were reported. No new decisions or action items were recorded.",
+        "decisions": [],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC19",
+      "group": "Edge cases",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The sprint planning meeting was cancelled because most team members were unavailable. No project discussion took place.",
+        "decisions": [],
+        "actions": []
+      }
+    },
+    {
+      "id": "TC20",
+      "group": "Edge cases",
+      "pass": true,
+      "reason": "",
+      "summary_ok": null,
+      "predicted": {
+        "summary": "The API seemed slower than usual. The database was suggested as a possible cause, and checking the logs was suggested. The issue was to be discussed again at the next meeting.",
+        "decisions": [],
+        "actions": []
+      }
+    }
+  ]
+}

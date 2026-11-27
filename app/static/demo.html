@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W2 Demo – Biên bản họp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e1419;
+      --panel: #161e26;
+      --panel-2: #1c2630;
+      --line: #2a3744;
+      --text: #e7eef5;
+      --muted: #8fa0b0;
+      --accent: #3dd6c6;
+      --accent-dim: #1f6f68;
+      --warn: #f0b429;
+      --err: #ef6b6b;
+      --ok: #5bd67a;
+      --radius: 12px;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(61, 214, 198, 0.12), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(240, 180, 41, 0.08), transparent 50%),
+        var(--bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(231, 238, 245, 0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.7), transparent 85%);
+    }
+
+    .wrap {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+      animation: rise 0.55s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .brand { display: grid; gap: 4px; }
+
+    .brand .tag {
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .controls .field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    select, button, textarea, pre { font: inherit; }
+
+    select {
+      min-width: min(380px, 70vw);
+      height: 44px;
+      padding: 0 14px;
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3px rgba(61, 214, 198, 0.15);
+    }
+
+    button {
+      height: 44px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #4ae0cf, #2bb8a9);
+      color: #06211f;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    button.compact {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 13px;
+    }
+
+    button:hover:not(:disabled) { filter: brightness(1.05); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: rise 0.65s ease both;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    #status {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      color: var(--warn);
+    }
+
+    #status.ok { color: var(--ok); }
+    #status.err { color: var(--err); }
+    #status.busy { color: var(--accent); }
+
+    textarea, pre {
+      width: 100%;
+      margin: 0;
+      padding: 18px;
+      min-height: 280px;
+      border: 0;
+      resize: vertical;
+      background: transparent;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c9d7e4;
+    }
+
+    #after {
+      margin-top: 16px;
+    }
+
+    #after.hidden,
+    #compareModal.hidden {
+      display: none;
+    }
+
+    #board td .compact {
+      white-space: nowrap;
+    }
+
+    #compareModal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #compareModal.hidden {
+      display: none;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 10, 16, 0.72);
+    }
+
+    .modal-card {
+      position: relative;
+      z-index: 1;
+      width: min(920px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      margin: 0;
+    }
+
+    #compare,
+    #modalCompare {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      color: var(--warn);
+    }
+
+    #compare.ok, #modalCompare.ok { color: var(--ok); }
+    #compare.err, #modalCompare.err { color: var(--err); }
+    #compare.busy, #modalCompare.busy { color: var(--accent); }
+
+    #compareReason,
+    #modalCompareReason {
+      margin: 0;
+      padding: 12px 16px 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .compare-body {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .compare-block {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .compare-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .compare-block-head h3 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .badge {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .badge.pass {
+      color: var(--ok);
+      border-color: rgba(91, 214, 122, 0.35);
+      background: rgba(91, 214, 122, 0.08);
+    }
+
+    .badge.fail {
+      color: var(--err);
+      border-color: rgba(239, 107, 107, 0.35);
+      background: rgba(239, 107, 107, 0.08);
+    }
+
+    .side-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 900px) {
+      .side-grid { grid-template-columns: 1fr; }
+    }
+
+    .side {
+      padding: 12px 14px;
+      min-height: 64px;
+    }
+
+    .side + .side {
+      border-left: 1px solid var(--line);
+    }
+
+    @media (max-width: 900px) {
+      .side + .side {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+
+    .side-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: "IBM Plex Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .side p, .side li {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.45;
+      color: #c9d7e4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .side ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .action-item {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .action-item.pass {
+      border-color: rgba(91, 214, 122, 0.35);
+    }
+
+    .action-item.fail {
+      border-color: rgba(239, 107, 107, 0.35);
+    }
+
+    .action-meta {
+      margin: 0 0 4px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .action-text {
+      margin: 0;
+      font-size: 14px;
+      color: #c9d7e4;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .summary-judge {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 0 16px 14px;
+    }
+
+    .summary-judge-status {
+      margin: 0;
+      font-size: 13px;
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--muted);
+    }
+
+    .summary-judge-status.ok { color: var(--ok); }
+    .summary-judge-status.err { color: var(--err); }
+    .summary-judge-status.busy { color: var(--accent); }
+
+    #board {
+      display: none;
+      margin-top: 16px;
+    }
+
+    #board.visible { display: block; }
+
+    #boardSummary {
+      margin: 0;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 13px;
+      border-top: 0;
+    }
+
+    td.pass { color: var(--ok); }
+    td.fail { color: var(--err); }
+
+    .hint {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hint a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="tag">W2 · Analyze Meeting</div>
+        <h1>Demo biên bản họp</h1>
+      </div>
+      <div class="controls">
+        <div class="field">
+          <span>Chọn case</span>
+          <select id="case"></select>
+        </div>
+        <button id="run" type="button">Run</button>
+        <button id="runAll" class="secondary" type="button">Run all</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Input</h2></div>
+        <textarea id="input" spellcheck="false"></textarea>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Kết quả AI</h2>
+          <p id="status"></p>
+        </div>
+        <pre id="result">Chọn case rồi bấm Run.</pre>
+      </section>
+    </div>
+
+    <div id="after" class="hidden">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>So sánh với gold</h2>
+          <p id="compare">Chưa chạy</p>
+        </div>
+        <p id="compareReason">Chấm theo số decisions/actions và cặp owner + due_date.</p>
+        <div id="compareBody" class="compare-body"></div>
+      </section>
+    </div>
+
+    <div id="compareModal" class="hidden" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="panel modal-card">
+        <div class="panel-head">
+          <h2>So sánh với gold · <span id="modalCaseId"></span></h2>
+          <div style="display:flex;gap:10px;align-items:center">
+            <p id="modalCompare">...</p>
+            <button id="modalClose" class="secondary compact" type="button">Đóng</button>
+          </div>
+        </div>
+        <p id="modalCompareReason"></p>
+        <div id="modalCompareBody" class="compare-body"></div>
+      </section>
+    </div>
+
+    <section id="board" class="panel">
+      <div class="panel-head">
+        <h2>Bảng Run all</h2>
+        <p id="boardSummary"></p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Case</th>
+            <th>Group</th>
+            <th>Kết quả</th>
+            <th>Lý do</th>
+            <th>Xem</th>
+          </tr>
+        </thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+    </section>
+
+    <p class="hint">API docs: <a href="/docs" target="_blank" rel="noreferrer">/docs</a>. Run all gọi API 20 lần, mất khoảng 1–2 phút.</p>
+  </div>
+
+  <script>
+    const select = document.getElementById("case");
+    const input = document.getElementById("input");
+    const run = document.getElementById("run");
+    const runAll = document.getElementById("runAll");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const compare = document.getElementById("compare");
+    const compareReason = document.getElementById("compareReason");
+    const compareBody = document.getElementById("compareBody");
+    const after = document.getElementById("after");
+    const compareModal = document.getElementById("compareModal");
+    const modalCaseId = document.getElementById("modalCaseId");
+    const modalCompare = document.getElementById("modalCompare");
+    const modalCompareReason = document.getElementById("modalCompareReason");
+    const modalCompareBody = document.getElementById("modalCompareBody");
+    const modalClose = document.getElementById("modalClose");
+    const board = document.getElementById("board");
+    const boardSummary = document.getElementById("boardSummary");
+    const boardBody = document.getElementById("boardBody");
+    let cases = [];
+    let runAllResults = {};
+
+    function showComparePanel() {
+      after.classList.remove("hidden");
+    }
+
+    function hideComparePanel() {
+      after.classList.add("hidden");
+    }
+
+    function openCompareModal() {
+      compareModal.classList.remove("hidden");
+      compareModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeCompareModal() {
+      compareModal.classList.add("hidden");
+      compareModal.setAttribute("aria-hidden", "true");
+    }
+
+    function applyCompareResult(caseId, out, mode) {
+      const c = cases.find((x) => x.id === caseId);
+      select.value = caseId;
+      input.value = (out && out.meetingText) || (c ? c.input : "");
+      setStatus(out.ok ? "xong" : out.reason, out.pass ? "ok" : "err");
+      result.textContent = typeof out.body === "string" ? out.body : JSON.stringify(out.body, null, 2);
+
+      const passText = out.expected ? (out.pass ? "PASS" : "FAIL") : "FAIL";
+      const passKind = out.expected && out.pass ? "ok" : "err";
+      const reasonText = out.reason || "";
+
+      if (mode === "modal") {
+        hideComparePanel();
+        modalCaseId.textContent = caseId;
+        setCompareOn(modalCompare, modalCompareReason, passText, passKind, reasonText);
+        if (out.expected) renderCompare(out.expected, out.body, modalCompareBody);
+        else modalCompareBody.innerHTML = "";
+        openCompareModal();
+      } else {
+        closeCompareModal();
+        showComparePanel();
+        setCompareOn(compare, compareReason, passText, passKind, reasonText);
+        if (out.expected) renderCompare(out.expected, out.body, compareBody);
+        else compareBody.innerHTML = "";
+      }
+    }
+
+    function setBusy(busy) {
+      run.disabled = busy;
+      runAll.disabled = busy;
+      document.querySelectorAll("[data-judge-summary]").forEach(function (b) {
+        b.disabled = busy;
+      });
+    }
+
+    function setStatus(text, kind) {
+      status.textContent = text;
+      status.className = kind || "";
+    }
+
+    function setCompareOn(badgeEl, reasonEl, text, kind, reason) {
+      badgeEl.textContent = text;
+      badgeEl.className = kind || "";
+      reasonEl.textContent = reason || "";
+    }
+
+    function setCompare(text, kind, reason) {
+      setCompareOn(compare, compareReason, text, kind, reason);
+    }
+
+    function esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function listHtml(items) {
+      if (!items || !items.length) return '<p class="empty">Không có</p>';
+      return "<ul>" + items.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+    }
+
+    function actionCard(a, ok) {
+      const cls = ok == null ? "" : (ok ? " pass" : " fail");
+      const owner = a.owner == null ? "null" : a.owner;
+      const due = a.due_date == null ? "null" : a.due_date;
+      return (
+        '<div class="action-item' + cls + '">' +
+          '<p class="action-meta">' + esc(owner) + " · " + esc(due) + "</p>" +
+          '<p class="action-text">' + esc(a.action || "") + "</p>" +
+        "</div>"
+      );
+    }
+
+    function matchActions(goldActions, aiActions) {
+      const left = (aiActions || []).map((a) => ({...a}));
+      const matched = [];
+      for (const g of goldActions || []) {
+        const idx = left.findIndex((a) => a.owner === g.owner && a.due_date === g.due_date);
+        if (idx >= 0) {
+          matched.push({gold: g, ai: left[idx], ok: true});
+          left.splice(idx, 1);
+        } else {
+          matched.push({gold: g, ai: null, ok: false});
+        }
+      }
+      const extra = left.map((a) => ({gold: null, ai: a, ok: false}));
+      return {matched, extra};
+    }
+
+    function sideBlock(title, badgeText, badgeKind, leftHtml, rightHtml) {
+      return (
+        '<div class="compare-block">' +
+          '<div class="compare-block-head">' +
+            "<h3>" + esc(title) + "</h3>" +
+            '<span class="badge' + (badgeKind ? " " + badgeKind : "") + '">' + esc(badgeText) + "</span>" +
+          "</div>" +
+          '<div class="side-grid">' +
+            '<div class="side"><p class="side-label">Gold</p>' + leftHtml + "</div>" +
+            '<div class="side"><p class="side-label">AI</p>' + rightHtml + "</div>" +
+          "</div>" +
+        "</div>"
+      );
+    }
+
+    function renderCompare(gold, ai, target) {
+      const outEl = target || compareBody;
+      if (!gold) {
+        outEl.innerHTML = '<p class="empty">Chưa có gold.</p>';
+        return;
+      }
+
+      const hasAi = !!ai;
+      const gDec = gold.decisions || [];
+      const aDec = hasAi ? (ai.decisions || []) : [];
+      const gAct = gold.actions || [];
+      const aAct = hasAi ? (ai.actions || []) : [];
+
+      const decOk = hasAi && gDec.length === aDec.length;
+      const actCountOk = hasAi && gAct.length === aAct.length;
+      const pairs = hasAi ? matchActions(gAct, aAct) : null;
+      const allMatched = hasAi && pairs.matched.every((x) => x.ok) && pairs.extra.length === 0;
+
+      let html = "";
+      html += sideBlock(
+        "Summary",
+        hasAi ? "chưa chấm nghĩa" : "chưa chạy",
+        "",
+        "<p>" + esc(gold.summary || "") + "</p>",
+        hasAi ? "<p>" + esc(ai.summary || "") + "</p>" : '<p class="empty">Chưa chạy</p>'
+      );
+      if (hasAi) {
+        html +=
+          '<div class="summary-judge">' +
+            '<button type="button" class="secondary compact" data-judge-summary>Chấm summary</button>' +
+            '<p class="summary-judge-status empty">Gold | AI ở trên. Bấm để chấm đúng nghĩa (không đổi PASS/FAIL).</p>' +
+          "</div>";
+      }
+      html += sideBlock(
+        "Decisions",
+        hasAi ? (gDec.length + " vs " + aDec.length) : (gDec.length + " mục"),
+        hasAi ? (decOk ? "pass" : "fail") : "",
+        listHtml(gDec),
+        hasAi ? listHtml(aDec) : '<p class="empty">Chưa chạy</p>'
+      );
+
+      if (!hasAi) {
+        const cards = gAct.length
+          ? '<div class="action-list">' + gAct.map((a) => actionCard(a, null)).join("") + "</div>"
+          : '<p class="empty">Không có</p>';
+        html += sideBlock(
+          "Actions",
+          gAct.length + " mục",
+          "",
+          cards,
+          '<p class="empty">Chưa chạy</p>'
+        );
+      } else {
+        const leftCards = pairs.matched.map((x) => actionCard(x.gold, x.ok)).join("");
+        const rightCards =
+          pairs.matched.map((x) => x.ai
+            ? actionCard(x.ai, x.ok)
+            : '<div class="action-item fail"><p class="action-meta">thiếu</p><p class="action-text empty">Không có action khớp owner + due_date</p></div>'
+          ).join("") +
+          pairs.extra.map((x) => actionCard(x.ai, false)).join("");
+        html += sideBlock(
+          "Actions",
+          actCountOk && allMatched ? "khớp" : "lệch",
+          actCountOk && allMatched ? "pass" : "fail",
+          leftCards ? '<div class="action-list">' + leftCards + "</div>" : '<p class="empty">Không có</p>',
+          rightCards ? '<div class="action-list">' + rightCards + "</div>" : '<p class="empty">Không có</p>'
+        );
+      }
+
+      outEl.innerHTML = html;
+      outEl.dataset.expectedSummary = gold.summary || "";
+      outEl.dataset.predictedSummary = hasAi ? (ai.summary || "") : "";
+    }
+
+    async function runJudgeSummary(btn) {
+      const root = btn.closest(".compare-body");
+      if (!root) return;
+      const expected = root.dataset.expectedSummary || "";
+      const predicted = root.dataset.predictedSummary || "";
+      const statusEl = root.querySelector(".summary-judge-status");
+      const badge = root.querySelector(".compare-block-head .badge");
+      if (!predicted) {
+        if (statusEl) {
+          statusEl.textContent = "Chưa có summary AI.";
+          statusEl.className = "summary-judge-status err";
+        }
+        return;
+      }
+      setBusy(true);
+      btn.disabled = true;
+      if (statusEl) {
+        statusEl.textContent = "Đang chấm nghĩa summary...";
+        statusEl.className = "summary-judge-status busy";
+      }
+      try {
+        const r = await fetch("/demo-api/judge-summary", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            expected_summary: expected,
+            predicted_summary: predicted,
+          }),
+        });
+        const data = await r.json();
+        if (!r.ok) {
+          if (statusEl) {
+            statusEl.textContent = "Lỗi: " + (data.detail || r.status);
+            statusEl.className = "summary-judge-status err";
+          }
+          if (badge) {
+            badge.textContent = "lỗi judge";
+            badge.className = "badge fail";
+          }
+        } else if (data.same_meaning) {
+          if (statusEl) {
+            statusEl.textContent = "Đúng nghĩa: có (100% cùng ý chính). Không đổi PASS/FAIL Gate.";
+            statusEl.className = "summary-judge-status ok";
+          }
+          if (badge) {
+            badge.textContent = "đúng nghĩa";
+            badge.className = "badge pass";
+          }
+        } else {
+          if (statusEl) {
+            statusEl.textContent = "Đúng nghĩa: không (0%). Không đổi PASS/FAIL Gate.";
+            statusEl.className = "summary-judge-status err";
+          }
+          if (badge) {
+            badge.textContent = "khác nghĩa";
+            badge.className = "badge fail";
+          }
+        }
+      } catch (e) {
+        if (statusEl) {
+          statusEl.textContent = String(e);
+          statusEl.className = "summary-judge-status err";
+        }
+      }
+      setBusy(false);
+      btn.disabled = false;
+    }
+
+    async function show() {
+      const c = cases.find(x => x.id === select.value);
+      input.value = c ? c.input : "";
+      setStatus("", "");
+      result.textContent = "Chọn case rồi bấm Run.";
+      setCompare("Chưa chạy", "", "Chấm theo số decisions/actions và cặp owner + due_date.");
+      compareBody.innerHTML = "";
+      hideComparePanel();
+      closeCompareModal();
+      setBusy(false);
+    }
+
+    async function analyzeOne(caseId, meetingText) {
+      const r = await fetch("/analyze-meeting", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({meeting_text: meetingText}),
+      });
+      const body = await r.json();
+      if (!r.ok) {
+        return {ok: false, body, pass: false, reason: "HTTP " + r.status, expected: null};
+      }
+      const cmp = await fetch("/demo-api/compare", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({case_id: caseId, predicted: body}),
+      });
+      const data = await cmp.json();
+      if (!cmp.ok) {
+        return {ok: true, body, pass: false, reason: "compare lỗi", expected: null};
+      }
+      return {
+        ok: true,
+        body,
+        pass: data.pass,
+        reason: data.pass ? "Khớp số decisions/actions và owner + due_date" : data.reason,
+        expected: data.expected,
+      };
+    }
+
+    async function runCase() {
+      setBusy(true);
+      closeCompareModal();
+      showComparePanel();
+      setStatus("Đang chạy...", "busy");
+      result.textContent = "";
+      setCompare("...", "busy", "Đang gọi API...");
+      try {
+        const out = await analyzeOne(select.value, input.value);
+        out.meetingText = input.value;
+        applyCompareResult(select.value, out, "panel");
+      } catch (e) {
+        setStatus("Lỗi mạng", "err");
+        result.textContent = String(e);
+        setCompare("FAIL", "err", String(e));
+      }
+      setBusy(false);
+    }
+
+    async function runAllCases() {
+      setBusy(true);
+      runAllResults = {};
+      hideComparePanel();
+      closeCompareModal();
+      board.classList.add("visible");
+      boardBody.innerHTML = "";
+      boardSummary.textContent = "0/" + cases.length;
+      let passed = 0;
+
+      for (let i = 0; i < cases.length; i++) {
+        const c = cases[i];
+        select.value = c.id;
+        input.value = c.input;
+        setStatus("Run all " + (i + 1) + "/" + cases.length + " · " + c.id, "busy");
+        result.textContent = "Đang chạy " + c.id + "...";
+
+        const tr = document.createElement("tr");
+        const viewTd = document.createElement("td");
+        const viewBtn = document.createElement("button");
+        viewBtn.type = "button";
+        viewBtn.className = "secondary compact";
+        viewBtn.textContent = "Xem KQ";
+        viewBtn.disabled = true;
+        viewTd.appendChild(viewBtn);
+        tr.innerHTML = "<td>" + esc(c.id) + "</td><td>" + esc(c.group) + "</td><td>...</td><td>đang chạy</td>";
+        tr.appendChild(viewTd);
+        boardBody.appendChild(tr);
+
+        let out;
+        try {
+          out = await analyzeOne(c.id, c.input);
+        } catch (e) {
+          out = {ok: false, body: String(e), pass: false, reason: "Lỗi mạng", expected: null};
+        }
+        out.meetingText = c.input;
+        runAllResults[c.id] = out;
+
+        if (out.pass) passed += 1;
+        tr.children[2].textContent = out.pass ? "PASS" : "FAIL";
+        tr.children[2].className = out.pass ? "pass" : "fail";
+        tr.children[3].textContent = out.reason;
+        boardSummary.textContent = passed + "/" + (i + 1) + " (gate ≥17)";
+        result.textContent = typeof out.body === "string" ? out.body : JSON.stringify(out.body, null, 2);
+        viewBtn.disabled = false;
+        viewBtn.addEventListener("click", function () {
+          applyCompareResult(c.id, runAllResults[c.id], "modal");
+        });
+      }
+
+      setStatus("Run all xong: " + passed + "/" + cases.length + " · bấm Xem KQ để mở popup", passed >= 17 ? "ok" : "err");
+      setBusy(false);
+    }
+
+    fetch("/demo-api/cases")
+      .then(r => r.json())
+      .then(data => {
+        cases = data;
+        for (const c of data) {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = `${c.id} – ${c.title} (${c.group})`;
+          select.appendChild(opt);
+        }
+        show();
+      });
+
+    select.addEventListener("change", show);
+    run.addEventListener("click", runCase);
+    runAll.addEventListener("click", runAllCases);
+    document.addEventListener("click", function (e) {
+      const btn = e.target && e.target.closest && e.target.closest("[data-judge-summary]");
+      if (btn) runJudgeSummary(btn);
+    });
+    modalClose.addEventListener("click", closeCompareModal);
+    compareModal.addEventListener("click", function (e) {
+      if (e.target && e.target.hasAttribute("data-close-modal")) closeCompareModal();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeCompareModal();
+    });
+  </script>
+</body>
+</html>

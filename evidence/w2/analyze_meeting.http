@@ -1,0 +1,15 @@
+### Analyze meeting – TC01 style
+POST http://127.0.0.1:8000/analyze-meeting
+Content-Type: application/json
+
+{
+  "meeting_text": "Meeting Date: 2026-11-23\nAttendees: Phu, Hung, Minh\n\nThe team reviewed the sprint backlog and agreed to prioritize the login bug. Phu will fix the login authentication issue by November 25, 2026. Hung will review the pull request by November 26, 2026. Minh will prepare regression test cases by November 27, 2026."
+}
+
+### Invalid input – expect 422
+POST http://127.0.0.1:8000/analyze-meeting
+Content-Type: application/json
+
+{
+  "meeting_text": "   "
+}
